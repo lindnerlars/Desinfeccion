@@ -61,7 +61,7 @@ void loop()
     {
       delay(100);
       count1++;
-      if (count1 == 30)
+      if (count1 == 5)
       {
         count1 = 0;
         Serial.println("Enter RUN");
