@@ -47,7 +47,7 @@ void setup()
 {
   pinMode(ledPin, OUTPUT);
   pinMode(relaypin, OUTPUT);
-  blinkLED(2);
+  blinkLED(3);
   Serial.println("Enter DETECT");
   Serial.begin(9600);
 }
@@ -79,7 +79,7 @@ void loop()
     Serial.print("[cm]: ");
     Serial.println(hc.dist());
     digitalWrite(relaypin, HIGH);
-    blinkLED(5);
+    blinkLED(3);
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
     states = STOP;
