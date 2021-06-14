@@ -26,11 +26,10 @@ enum machineStates
   STOP
 };
 machineStates states = DETECT;
-
 HCSR04 hc(trigpin, echopin);
 
 int count1 = 0;
-float threshold = 30.00;
+float threshold = 10.00;
 
 void blinkLED(int count2)
 {
@@ -47,14 +46,13 @@ void setup()
 {
   pinMode(ledPin, OUTPUT);
   pinMode(relaypin, OUTPUT);
-  blinkLED(3);
+  blinkLED(2);
   Serial.println("Enter DETECT");
   Serial.begin(9600);
 }
 
 void loop()
 {
-
   if (states == DETECT)
   {
     if (hc.dist() < threshold)
@@ -79,7 +77,8 @@ void loop()
     Serial.print("[cm]: ");
     Serial.println(hc.dist());
     digitalWrite(relaypin, HIGH);
-    blinkLED(3);
+    _delay_ms(750);
+    // blinkLED(3);                   // Lo sustituye con _delay_ms(), porque a veces se quedo trabado en la subrutina
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
     states = STOP;
