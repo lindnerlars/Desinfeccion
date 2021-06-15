@@ -6,8 +6,6 @@
  *
  * Control de un Arduino Pro Mini para una Estacion de Desinfeccion
  * 
- * Aun falta:
- * - Lectura de temperature con camera o sensor 
  * 
 **************************************************************************************************/
 
@@ -77,8 +75,13 @@ void loop()
     Serial.print("[cm]: ");
     Serial.println(hc.dist());
     digitalWrite(relaypin, HIGH);
+<<<<<<< HEAD
     _delay_ms(500);
     // blinkLED(3);                   // Lo sustituye con _delay_ms(), porque a veces se quedo trabado en la subrutina
+=======
+    // blinkLED(3);                   // Sustituye eso con _delay_ms(), ya que se a veces se quedo trabado usando la subrutina blinkLED()
+    _delay_ms(750);
+>>>>>>> 324b8481ac233afda4721e960b9c0adcfff985bc
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
     states = STOP;
