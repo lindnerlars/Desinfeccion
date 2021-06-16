@@ -45,7 +45,7 @@ void setup()
 {
   pinMode(ledPin, OUTPUT);
   pinMode(relaypin, OUTPUT);
-  blinkLED(3);
+  blinkLED(2);
   Serial.println("Enter DETECT");
   Serial.begin(9600);
 }
