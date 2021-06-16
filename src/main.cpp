@@ -78,7 +78,7 @@ void loop()
     Serial.println(hc.dist());
     digitalWrite(relaypin, HIGH);
     // blinkLED(3);                   // Sustituye eso con _delay_ms(), ya que se a veces se quedo trabado usando la subrutina blinkLED()
-    _delay_ms(750);
+    _delay_ms(250);
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
     states = STOP;
