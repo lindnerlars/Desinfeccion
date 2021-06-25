@@ -11,6 +11,7 @@
 
 #include <Arduino.h>
 #include <HCSR04.h>
+#include <avr/wdt.h>
 
 #define echopin 2
 #define trigpin 3
@@ -24,30 +25,33 @@ enum machineStates
   STOP
 };
 machineStates states = DETECT;
-
 HCSR04 hc(trigpin, echopin);
 
 int count1 = 0;
 float threshold = 30.00;
 
-void blinkLED(int count2)
-{
-  for (int i = 0; i < count2; i++)
-  {
-    digitalWrite(ledPin, !digitalRead(ledPin));
-    delay(100);
-    digitalWrite(ledPin, !digitalRead(ledPin));
-    delay(400);
-  }
-}
+// void blinkLED(int count2)
+// {
+//   for (int i = 0; i < count2; i++)
+//   {
+//     digitalWrite(ledPin, !digitalRead(ledPin));
+//     delay(100);
+//     digitalWrite(ledPin, !digitalRead(ledPin));
+//     delay(400);
+//   }
+// }
 
 void setup()
 {
   pinMode(ledPin, OUTPUT);
   pinMode(relaypin, OUTPUT);
-  blinkLED(2);
+  // blinkLED(2);
   Serial.println("Enter DETECT");
   Serial.begin(9600);
+
+  // Enables the Watchdog Timer (WDT) for 4s
+  // If in 4s the WDT is not resetted, the WDT resets the MCU
+  wdt_enable(WDTO_4S);
 }
 
 void loop()
@@ -89,4 +93,7 @@ void loop()
     Serial.println("Enter DETECT");
     states = DETECT;
   }
+
+  // Resets the Watchdog Timer
+  wdt_reset();
 }
