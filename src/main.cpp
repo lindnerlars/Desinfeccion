@@ -79,7 +79,8 @@ void loop()
     Serial.print("[cm]: ");
     Serial.println(hc.dist());
     digitalWrite(relaypin, HIGH);
-    blinkLED(3);
+    _delay_ms(750);
+    // blinkLED(3);                 // Sustituye eso con _delay_ms(), ya que se a veces se quedo trabado usando esa subrutina
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
     states = STOP;
