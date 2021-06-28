@@ -45,11 +45,7 @@ void setup()
 {
   pinMode(ledPin, OUTPUT);
   pinMode(relaypin, OUTPUT);
-<<<<<<< HEAD
-  blinkLED(2);
-=======
   // blinkLED(2);
->>>>>>> ce42c26ae82baac185e4032f55039bb61428a3b7
   Serial.println("Enter DETECT");
   Serial.begin(9600);
 
