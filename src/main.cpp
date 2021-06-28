@@ -89,6 +89,7 @@ void loop()
   if ((states == STOP) && (hc.dist() > threshold))
   {
     Serial.println("Enter DETECT");
+    delay(1000);
     states = DETECT;
   }
 
