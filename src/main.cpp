@@ -45,7 +45,6 @@ void setup()
 {
   pinMode(ledPin, OUTPUT);
   pinMode(relaypin, OUTPUT);
-  // blinkLED(2);
   Serial.println("Enter DETECT");
   Serial.begin(9600);
 
@@ -82,7 +81,6 @@ void loop()
     digitalWrite(relaypin, HIGH);
     // blinkLED(3);                   // Sustituye eso con _delay_ms(), ya que se a veces se quedo trabado usando la subrutina blinkLED()
     delay(250);
-    // _delay_ms(250);
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
     states = STOP;
