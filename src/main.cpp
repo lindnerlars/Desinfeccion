@@ -11,6 +11,7 @@
 
 #include <Arduino.h>
 #include <HCSR04.h>
+#include <avr/wdt.h>
 
 #define echopin 2
 #define trigpin 3
@@ -29,24 +30,32 @@ HCSR04 hc(trigpin, echopin);
 int count1 = 0;
 float threshold = 10.00;
 
-void blinkLED(int count2)
-{
-  for (int i = 0; i < count2; i++)
-  {
-    digitalWrite(ledPin, !digitalRead(ledPin));
-    delay(100);
-    digitalWrite(ledPin, !digitalRead(ledPin));
-    delay(400);
-  }
-}
+// void blinkLED(int count2)
+// {
+//   for (int i = 0; i < count2; i++)
+//   {
+//     digitalWrite(ledPin, !digitalRead(ledPin));
+//     delay(100);
+//     digitalWrite(ledPin, !digitalRead(ledPin));
+//     delay(400);
+//   }
+// }
 
 void setup()
 {
   pinMode(ledPin, OUTPUT);
   pinMode(relaypin, OUTPUT);
+<<<<<<< HEAD
   blinkLED(2);
+=======
+  // blinkLED(2);
+>>>>>>> ce42c26ae82baac185e4032f55039bb61428a3b7
   Serial.println("Enter DETECT");
   Serial.begin(9600);
+
+  // Enables the Watchdog Timer (WDT) for 4s
+  // If in 4s the WDT is not resetted, the WDT resets the MCU
+  wdt_enable(WDTO_4S);
 }
 
 void loop()
@@ -75,8 +84,9 @@ void loop()
     Serial.print("[cm]: ");
     Serial.println(hc.dist());
     digitalWrite(relaypin, HIGH);
-    _delay_ms(250);
-    // blinkLED(3);                   // Lo sustituye con _delay_ms(), porque a veces se quedo trabado en la subrutina
+    // blinkLED(3);                   // Sustituye eso con _delay_ms(), ya que se a veces se quedo trabado usando la subrutina blinkLED()
+    delay(250);
+    // _delay_ms(250);
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
     states = STOP;
@@ -87,4 +97,7 @@ void loop()
     Serial.println("Enter DETECT");
     states = DETECT;
   }
+
+  // Resets the Watchdog Timer
+  wdt_reset();
 }
