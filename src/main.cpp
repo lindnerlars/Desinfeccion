@@ -79,7 +79,7 @@ void loop()
     Serial.print("[cm]: ");
     Serial.println(hc.dist());
     digitalWrite(relaypin, HIGH);
-    // blinkLED(3);                   // Sustituye eso con _delay_ms(), ya que se a veces se quedo trabado usando la subrutina blinkLED()
+    // blinkLED(3);                   // Sustituye eso con delay(), ya que se a veces se quedo trabado usando la subrutina blinkLED()
     delay(250);
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
@@ -89,7 +89,7 @@ void loop()
   if ((states == STOP) && (hc.dist() > threshold))
   {
     Serial.println("Enter DETECT");
-    delay(1000);
+    delay(1000); // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
     states = DETECT;
   }
 
