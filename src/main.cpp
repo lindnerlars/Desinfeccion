@@ -1,17 +1,16 @@
 /**************************************************************************************************
  * Desinfeccion
  *
- * Created: 25/01/2021
+ * Created: 13/08/2021
  * Author: Lars Lindner
  *
  * Control de un Arduino Pro Mini para una Estacion de Desinfeccion
- * 
+ * (Nueva Implementacion usando switch - case)
  * 
 **************************************************************************************************/
 
 #include <Arduino.h>
 #include <HCSR04.h>
-#include <avr/wdt.h>
 
 #define echopin 2
 #define trigpin 3
@@ -30,38 +29,24 @@ HCSR04 hc(trigpin, echopin);
 int count1 = 0;
 float threshold = 10.00;
 
-// void blinkLED(int count2)
-// {
-//   for (int i = 0; i < count2; i++)
-//   {
-//     digitalWrite(ledPin, !digitalRead(ledPin));
-//     delay(100);
-//     digitalWrite(ledPin, !digitalRead(ledPin));
-//     delay(400);
-//   }
-// }
-
 void setup()
 {
-  pinMode(ledPin, OUTPUT);
+  // pinMode(ledPin, OUTPUT);
   pinMode(relaypin, OUTPUT);
   Serial.println("Enter DETECT");
   Serial.begin(9600);
-
-  // Enables the Watchdog Timer (WDT) for 4s
-  // If in 4s the WDT is not resetted, the WDT resets the MCU
-  wdt_enable(WDTO_4S);
 }
 
-void loop()
+void state_machine()
 {
-  if (states == DETECT)
+  switch (states)
   {
+  case DETECT:
     if (hc.dist() < threshold)
     {
       delay(100);
       count1++;
-      if (count1 == 5)
+      if (count1 >= 5)
       {
         count1 = 0;
         Serial.println("Enter RUN");
@@ -72,27 +57,32 @@ void loop()
     {
       count1 = 0;
     }
-  }
+    break;
 
-  if (states == RUN)
-  {
+  case RUN:
     Serial.print("[cm]: ");
     Serial.println(hc.dist());
     digitalWrite(relaypin, HIGH);
-    // blinkLED(3);                   // Sustituye eso con delay(), ya que se a veces se quedo trabado usando la subrutina blinkLED()
     delay(250);
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
     states = STOP;
-  }
+    break;
 
-  if ((states == STOP) && (hc.dist() > threshold))
-  {
-    Serial.println("Enter DETECT");
-    delay(1000); // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
-    states = DETECT;
+  case STOP:
+    if (hc.dist() > threshold)
+    {
+      digitalWrite(relaypin, LOW); // Para asegurar que realmente se apaga el relay
+      delay(1000);                 // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
+      Serial.println("Enter DETECT");
+      states = DETECT;
+    }
+    break;
   }
+}
 
-  // Resets the Watchdog Timer
-  wdt_reset();
+void loop()
+{
+  state_machine();
+  delay(10);
 }
