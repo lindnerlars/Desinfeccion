@@ -30,16 +30,16 @@ HCSR04 hc(trigpin, echopin);
 int count1 = 0;
 float threshold = 10.00;
 
-void blinkLED(int count2)
-{
-  for (int i = 0; i < count2; i++)
-  {
-    digitalWrite(ledPin, !digitalRead(ledPin));
-    delay(100);
-    digitalWrite(ledPin, !digitalRead(ledPin));
-    delay(400);
-  }
-}
+// void blinkLED(int count2)
+// {
+//   for (int i = 0; i < count2; i++)
+//   {
+//     digitalWrite(ledPin, !digitalRead(ledPin));
+//     delay(100);
+//     digitalWrite(ledPin, !digitalRead(ledPin));
+//     delay(400);
+//   }
+// }
 
 void setup()
 {
@@ -79,7 +79,7 @@ void loop()
     Serial.print("[cm]: ");
     Serial.println(hc.dist());
     digitalWrite(relaypin, HIGH);
-    // blinkLED(3);                   // Sustituye eso con delay(), ya que a veces se queda trabado usando la subrutina blinkLED()
+    // blinkLED(3);                   // Sustituye eso con delay(), ya que se a veces se quedo trabado usando la subrutina blinkLED()
     delay(250);
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
