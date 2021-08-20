@@ -3,6 +3,7 @@
  *
  * Created: 13/08/2021
  * Author: Lars Lindner
+ * Revision: 20/08/2021
  *
  * Control de un Arduino Pro Mini (16MHz) para una Estacion de Desinfeccion 
  * en el Instituto de Ingenieria UABC
