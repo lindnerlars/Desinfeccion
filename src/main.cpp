@@ -4,8 +4,8 @@
  * Created: 13/08/2021
  * Author: Lars Lindner
  *
- * Control de un Arduino Pro Mini para una Estacion de Desinfeccion
- * (Nueva Implementacion usando switch - case)
+ * Control de un Arduino Pro Mini (16MHz) para una Estacion de Desinfeccion 
+ * en el Instituto de Ingenieria UABC
  * 
 **************************************************************************************************/
 
@@ -28,8 +28,8 @@ HCSR04 hc(trigpin, echopin);
 
 int count1 = 0;
 int count2 = 0;
-float val_min = 10.0;
-float val_max = 50.0;
+float dist_min = 10.0;
+float dist_max = 50.0;
 float act_val = 0.0;
 
 void setup()
@@ -46,7 +46,7 @@ void state_machine()
   {
   case DETECT:
     act_val = hc.dist();
-    if (act_val < val_min)
+    if (act_val < dist_min)
     {
       delay(100);
       count1++;
@@ -67,7 +67,7 @@ void state_machine()
     Serial.print("[cm]: ");
     Serial.println(act_val);
     digitalWrite(relaypin, HIGH);
-    delay(5000);
+    delay(250);
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
     states = STOP;
@@ -75,15 +75,14 @@ void state_machine()
 
   case STOP:
     act_val = hc.dist();
-    if (act_val > val_max)
+    if (act_val > dist_max)
     {
       delay(100);
       count2++;
-      if (count2 >= 10)
+      if (count2 >= 10) // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
       {
         count2 = 0;
         digitalWrite(relaypin, LOW); // Para asegurar que realmente se apaga el relay
-        // delay(1000);                 // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
         Serial.println("Enter DETECT");
         states = DETECT;
       }
