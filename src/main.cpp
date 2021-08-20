@@ -49,9 +49,9 @@ void state_machine()
     act_val = hc.dist();
     if (act_val < dist_min)
     {
-      delay(100);
+      delay(50);
       count1++;
-      if (count1 >= 5)
+      if (count1 >= 6)
       {
         count1 = 0;
         Serial.println("Enter RUN");
