@@ -27,7 +27,10 @@ machineStates states = DETECT;
 HCSR04 hc(trigpin, echopin);
 
 int count1 = 0;
-float threshold = 10.00;
+int count2 = 0;
+float val_min = 10.0;
+float val_max = 50.0;
+float act_val = 0.0;
 
 void setup()
 {
@@ -42,7 +45,8 @@ void state_machine()
   switch (states)
   {
   case DETECT:
-    if (hc.dist() < threshold)
+    act_val = hc.dist();
+    if (act_val < val_min)
     {
       delay(100);
       count1++;
@@ -61,22 +65,42 @@ void state_machine()
 
   case RUN:
     Serial.print("[cm]: ");
-    Serial.println(hc.dist());
+    Serial.println(act_val);
     digitalWrite(relaypin, HIGH);
-    delay(250);
+    delay(5000);
     digitalWrite(relaypin, LOW);
     Serial.println("Enter STOP");
     states = STOP;
     break;
 
   case STOP:
-    if (hc.dist() > threshold)
+    act_val = hc.dist();
+    if (act_val > val_max)
     {
-      digitalWrite(relaypin, LOW); // Para asegurar que realmente se apaga el relay
-      delay(1000);                 // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
-      Serial.println("Enter DETECT");
-      states = DETECT;
+      delay(100);
+      count2++;
+      if (count2 >= 10)
+      {
+        count2 = 0;
+        digitalWrite(relaypin, LOW); // Para asegurar que realmente se apaga el relay
+        // delay(1000);                 // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
+        Serial.println("Enter DETECT");
+        states = DETECT;
+      }
     }
+    else
+    {
+      count2 = 0;
+    }
+
+    // if (hc.dist() > val_max)
+    // {
+    //   digitalWrite(relaypin, LOW); // Para asegurar que realmente se apaga el relay
+    //   delay(1000);                 // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
+    //   Serial.println("Enter DETECT");
+    //   states = DETECT;
+    // }
+
     break;
   }
 }
