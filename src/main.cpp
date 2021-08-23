@@ -16,7 +16,7 @@
 #define echopin 2
 #define trigpin 3
 #define relaypin 4
-#define ledPin 13
+// #define ledPin 13
 
 enum machineStates
 {
@@ -27,17 +27,17 @@ enum machineStates
 machineStates states = DETECT;
 HCSR04 hc(trigpin, echopin);
 
-int count1 = 0;
-int count2 = 0;
+int count_detect = 0;
+int count_stop = 0;
 float dist_min = 10.0;
 float dist_max = 50.0;
-float act_val = 0.0;
+float dist_value = 0.0;
 
 void setup()
 {
   // pinMode(ledPin, OUTPUT);
   pinMode(relaypin, OUTPUT);
-  Serial.println("Enter DETECT");
+  Serial.println("Start main loop()");
   Serial.begin(9600);
 }
 
@@ -46,51 +46,54 @@ void state_machine()
   switch (states)
   {
   case DETECT:
-    act_val = hc.dist();
-    if (act_val < dist_min)
+    Serial.println("DETECT");
+    dist_value = hc.dist();
+    if (dist_value < dist_min)
     {
       delay(50);
-      count1++;
-      if (count1 >= 6)
+      count_detect++;
+      if (count_detect >= 6)
       {
-        count1 = 0;
-        Serial.println("Enter RUN");
+        count_detect = 0;
         states = RUN;
       }
     }
     else
     {
-      count1 = 0;
+      count_detect = 0;
     }
     break;
 
   case RUN:
+    Serial.println("RUN");
     Serial.print("[cm]: ");
-    Serial.println(act_val);
+    Serial.println(dist_value);
     digitalWrite(relaypin, HIGH);
+    Serial.println("Relay HIGH");
     delay(250);
     digitalWrite(relaypin, LOW);
-    Serial.println("Enter STOP");
+    Serial.println("Relay LOW");
     states = STOP;
     break;
 
   case STOP:
-    act_val = hc.dist();
-    if (act_val > dist_max)
+    Serial.println("STOP");
+    dist_value = hc.dist();
+    if (dist_value > dist_max)
     {
       delay(100);
-      count2++;
-      if (count2 >= 10) // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
+      count_stop++;
+      if (count_stop >= 10) // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
       {
-        count2 = 0;
+        count_stop = 0;
         digitalWrite(relaypin, LOW); // Para asegurar que realmente se apaga el relay
-        Serial.println("Enter DETECT");
+        Serial.print("Relay LOW");
         states = DETECT;
       }
     }
     else
     {
-      count2 = 0;
+      count_stop = 0;
     }
 
     // if (hc.dist() > val_max)
