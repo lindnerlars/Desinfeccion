@@ -111,5 +111,5 @@ void state_machine()
 void loop()
 {
   state_machine();
-  delay(10);
+  // delay(10);
 }
