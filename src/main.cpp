@@ -18,7 +18,6 @@
 #define echopin 2
 #define trigpin 3
 #define relaypin 4
-// #define ledPin 13
 
 enum machineStates
 {
@@ -29,12 +28,12 @@ enum machineStates
 machineStates states = DETECT;
 HCSR04 hc(trigpin, echopin);
 
-bool serial_flag = true;
-int count_detect = 0;
-int count_stop = 0;
-float dist_min = 10.0;
-float dist_max = 100.0;
-float dist_value = 0.0;
+bool serial_flag = true; // To send serial message only once
+int count_detect = 0;    // Counter for foot presence
+int count_stop = 0;      // Counter for foot absence
+float dist_min = 10.0;   // Minimum distance for foot presence
+float dist_max = 100.0;  // Maximum distance for foot absence
+float dist_value = 0.0;  // Actual foot distance value
 
 void setup()
 {
@@ -60,7 +59,7 @@ void state_machine()
       delay(50);
       count_detect++;
 
-      // El usuario tiene que tener minimo 4 x delay() la pie dentro del rango dist_min
+      // El usuario tiene que tener minimo 4 x delay() el pie dentro del rango dist_min
       if (count_detect >= 4)
       {
         Serial.print("[cm]: ");
