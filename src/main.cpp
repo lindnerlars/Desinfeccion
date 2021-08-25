@@ -7,7 +7,7 @@
  *
  * Control de un Arduino Pro Mini (16MHz) para una Estacion de Desinfeccion 
  * en el Instituto de Ingenieria UABC
- * El pedal de la estacion debe estar limpio
+ * El pedal de la estacion debe estar limpio!
  * 
  * 
 **************************************************************************************************/
@@ -39,8 +39,8 @@ float dist_value = 0.0;
 void setup()
 {
   pinMode(relaypin, OUTPUT);
-  Serial.println("Start main loop()");
   Serial.begin(9600);
+  Serial.println("Start main loop()");
 }
 
 void state_machine()
@@ -59,13 +59,15 @@ void state_machine()
     {
       delay(50);
       count_detect++;
+
+      // El usuario tiene que tener minimo 4 x delay() la pie dentro del rango dist_min
       if (count_detect >= 4)
       {
-        count_detect = 0;
         Serial.print("[cm]: ");
         Serial.println(dist_value);
-        states = RUN;
+        count_detect = 0;
         serial_flag = true;
+        states = RUN;
       }
     }
     else
@@ -96,13 +98,15 @@ void state_machine()
     {
       delay(100);
       count_stop++;
-      if (count_stop >= 10) // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
+
+      // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
+      if (count_stop >= 10)
       {
-        count_stop = 0;
         Serial.print("[cm]: ");
         Serial.println(dist_value);
-        states = DETECT;
+        count_stop = 0;
         serial_flag = true;
+        states = DETECT;
       }
     }
     else
