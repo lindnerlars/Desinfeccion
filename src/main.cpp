@@ -3,10 +3,12 @@
  *
  * Created: 13/08/2021
  * Author: Lars Lindner
- * Revision: 23/08/2021
+ * Revision: 24/08/2021
  *
  * Control de un Arduino Pro Mini (16MHz) para una Estacion de Desinfeccion 
  * en el Instituto de Ingenieria UABC
+ * El pedal de la estacion debe estar limpio
+ * 
  * 
 **************************************************************************************************/
 
@@ -27,15 +29,15 @@ enum machineStates
 machineStates states = DETECT;
 HCSR04 hc(trigpin, echopin);
 
+bool serial_flag = true;
 int count_detect = 0;
 int count_stop = 0;
 float dist_min = 10.0;
-float dist_max = 50.0;
+float dist_max = 100.0;
 float dist_value = 0.0;
 
 void setup()
 {
-  // pinMode(ledPin, OUTPUT);
   pinMode(relaypin, OUTPUT);
   Serial.println("Start main loop()");
   Serial.begin(9600);
@@ -46,16 +48,24 @@ void state_machine()
   switch (states)
   {
   case DETECT:
-    Serial.println("DETECT");
+    if (serial_flag == true)
+    {
+      Serial.println("DETECT");
+      serial_flag = false;
+    }
+
     dist_value = hc.dist();
     if (dist_value < dist_min)
     {
       delay(50);
       count_detect++;
-      if (count_detect >= 6)
+      if (count_detect >= 4)
       {
         count_detect = 0;
+        Serial.print("[cm]: ");
+        Serial.println(dist_value);
         states = RUN;
+        serial_flag = true;
       }
     }
     else
@@ -66,8 +76,6 @@ void state_machine()
 
   case RUN:
     Serial.println("RUN");
-    Serial.print("[cm]: ");
-    Serial.println(dist_value);
     digitalWrite(relaypin, HIGH);
     Serial.println("Relay HIGH");
     delay(250);
@@ -77,7 +85,12 @@ void state_machine()
     break;
 
   case STOP:
-    Serial.println("STOP");
+    if (serial_flag == true)
+    {
+      Serial.println("STOP");
+      serial_flag = false;
+    }
+
     dist_value = hc.dist();
     if (dist_value > dist_max)
     {
@@ -86,24 +99,16 @@ void state_machine()
       if (count_stop >= 10) // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
       {
         count_stop = 0;
-        digitalWrite(relaypin, LOW); // Para asegurar que realmente se apaga el relay
-        Serial.print("Relay LOW");
+        Serial.print("[cm]: ");
+        Serial.println(dist_value);
         states = DETECT;
+        serial_flag = true;
       }
     }
     else
     {
       count_stop = 0;
     }
-
-    // if (hc.dist() > val_max)
-    // {
-    //   digitalWrite(relaypin, LOW); // Para asegurar que realmente se apaga el relay
-    //   delay(1000);                 // Para evitar que por un movimiento leve del pie, no entre rapido al estado DETECT!
-    //   Serial.println("Enter DETECT");
-    //   states = DETECT;
-    // }
-
     break;
   }
 }
